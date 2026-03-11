@@ -70,11 +70,6 @@ jobs:
           java-version: '17'
       
       # Make playit executable
-      - name: Prepare playit
-        run: |
-          chmod +x ./playit-linux-amd64
-          echo "✅ Playit binary ready"
-      
       # Configure git for auto-save (using existing PAT)
       - name: Configure Git
         run: |
@@ -126,26 +121,6 @@ jobs:
           chmod +x save-world.sh
       
       # Configure playit with secret
-      - name: Configure Playit
-        env:
-          PLAYIT_SECRET: ${{ secrets.PLAYIT_SECRET }}
-        run: |
-          mkdir -p ~/.config/playit
-          cat > ~/.config/playit/config.toml << EOF
-          secret = "$PLAYIT_SECRET"
-          
-          [[tunnels]]
-          name = "minecraft-server"
-          protocol = "tcp"
-          port = 25565
-          
-            [tunnels.port_mapping]
-            local_port = 25565
-          EOF
-          
-          echo "✅ Playit configured"
-      
-      # Start server with all existing files
       - name: Start Minecraft Server
         run: |
           # Create named pipe for server commands
