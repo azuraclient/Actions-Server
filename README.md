@@ -1,1 +1,1 @@
-secrect
+secret
