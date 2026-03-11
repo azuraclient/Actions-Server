@@ -1,0 +1,164 @@
+name: Minecraft Server with Playit.gg
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:  # Manual trigger
+  schedule:
+    - cron: '0 */4 * * *'  # Run every 4 hours (under 6-hour limit)
+
+jobs:
+  minecraft-server:
+    runs-on: ubuntu-22.04  # Using LTS for stability
+    # Timeout after 5 hours (1 hour buffer before GitHub kills it)
+    timeout-minutes: 300
+    
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          persist-credentials: true
+          token: ${{ secrets.GITHUB_TOKEN }}  # Use default token, not PAT
+      
+      # Setup Java for Spigot
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'  # Spigot 1.20+ works with Java 17
+      
+      # Cache Minecraft server files
+      - name: Cache Spigot
+        uses: actions/cache@v4
+        id: cache-spigot
+        with:
+          path: |
+            spigot.jar
+            plugins/
+            world/
+            world_nether/
+            world_the_end/
+          key: ${{ runner.os }}-spigot-${{ hashFiles('server.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-spigot-
+      
+      # Download Spigot if not cached
+      # Accept EULA
+      - name: Accept EULA
+        run: |
+          echo "eula=true" > eula.txt
+      
+      # Configure server for low-resource environment
+      - name: Configure Playit.gg
+        env:
+          PLAYIT_SECRET: ${{ secrets.PLAYIT_SECRET }}
+        run: |
+          if [ -z "$PLAYIT_SECRET" ]; then
+            echo "⚠️ No playit.gg secret found!"
+            echo "Get your secret from: https://playit.gg/account/settings"
+            echo "Add PLAYIT_SECRET to repository secrets"
+            exit 1
+          fi
+          
+          # Create config directory
+          mkdir -p ~/.config/playit
+          
+          # Create playit config with TCP tunnel
+          cat > ~/.config/playit/config.toml << EOF
+          # Playit.gg Configuration
+          secret = "$PLAYIT_SECRET"
+          
+          [[tunnels]]
+          name = "minecraft-server"
+          protocol = "tcp"
+          port = 25565
+          
+            [tunnels.port_mapping]
+            local_port = 25565
+          EOF
+          
+          echo "Playit.gg configured successfully"
+      
+      # Start server and tunnel with monitoring
+      - name: Run Minecraft Server with Playit.gg Tunnel
+        run: |
+          # Function to display connection info
+          show_connection_info() {
+            echo ""
+            echo "=================================================="
+            echo "✅ MINECRAFT SERVER IS RUNNING!"
+            echo "=================================================="
+            echo ""
+            echo "📱 Check your tunnel status at: https://playit.gg/account/tunnels"
+            echo ""
+            echo "🔍 To find your connection address:"
+            echo "   - Visit playit.gg dashboard"
+            echo "   - Look for your Minecraft tunnel"
+            echo "   - Copy the playit.gg domain (e.g., minecraft-1234.playit.gg)"
+            echo ""
+            echo "⏱️  Server will run for ~5 hours (GitHub Actions limit)"
+            echo "=================================================="
+          }
+          
+          # Start playit.gg tunnel in background
+          echo "Starting playit.gg tunnel..."
+          ./playit-bin --secret "$PLAYIT_SECRET" > playit.log 2>&1 &
+          PLAYIT_PID=$!
+          
+          # Wait for tunnel to establish
+          sleep 5
+          
+          # Show connection info
+          show_connection_info
+          
+          # Start Minecraft server with optimized memory settings
+          echo "Starting Minecraft server..."
+          
+          # Get available memory and set heap size appropriately
+          AVAILABLE_MEM=$(free -g | awk '/^Mem:/{print $2}')
+          HEAP_SIZE=$((AVAILABLE_MEM - 1))
+          if [ $HEAP_SIZE -gt 5 ]; then HEAP_SIZE=5; fi
+          
+          echo "Using ${HEAP_SIZE}G heap size"
+          
+          # Start server with optimized flags for GitHub Actions
+          java -XX:+UseG1GC \
+               -XX:+ParallelRefProcEnabled \
+               -XX:MaxGCPauseMillis=200 \
+               -XX:+UnlockExperimentalVMOptions \
+               -XX:+DisableExplicitGC \
+               -XX:+AlwaysPreTouch \
+               -XX:G1NewSizePercent=30 \
+               -XX:G1MaxNewSizePercent=40 \
+               -XX:G1HeapRegionSize=8M \
+               -XX:G1ReservePercent=20 \
+               -XX:G1HeapWastePercent=5 \
+               -XX:G1MixedGCCountTarget=4 \
+               -XX:InitiatingHeapOccupancyPercent=15 \
+               -Xms${HEAP_SIZE}G \
+               -Xmx${HEAP_SIZE}G \
+               -jar spigot.jar nogui 2>&1 | tee -a server.log
+          
+          SERVER_EXIT=$?
+          
+          # If server exits, check if it was intentional
+          if [ $SERVER_EXIT -ne 0 ]; then
+            echo "⚠️ Server exited with code $SERVER_EXIT"
+            echo "Check server.log for details"
+          fi
+          
+          # Cleanup tunnel
+          kill $PLAYIT_PID 2>/dev/null || true
+      
+      # Archive logs (optional)
+      - name: Archive Server Logs
+        if: always()  # Run even if server fails
+        uses: actions/upload-artifact@v4
+        with:
+          name: minecraft-logs
+          path: |
+            server.log
+            playit.log
+            logs/
+          retention-days: 7
