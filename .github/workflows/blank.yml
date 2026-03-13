@@ -262,9 +262,7 @@ jobs:
       
       # Upload logs
       - name: Upload logs
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
+        run: |
           name: server-logs
           path: |
             server.log
