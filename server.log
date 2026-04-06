@@ -1,1 +1,57 @@
 Loading libraries, please wait...
+2026-04-06 09:04:17,076 main WARN Advanced terminal features are not available in this environment
+[09:04:17 INFO]: Starting minecraft server version 1.8.8
+[09:04:17 INFO]: Loading properties
+[09:04:17 INFO]: Default game type: SURVIVAL
+[09:04:17 INFO]: This server is running PandaSpigot version git-PandaSpigot-126 (MC: 1.8.8) (Implementing API version 1.8.8-R0.1-SNAPSHOT) (Git: dd0f0ea)
+[09:04:18 INFO]: Debug logging is disabled
+[09:04:18 INFO]: Server Ping Player Sample Count: 12
+
+[09:04:18 INFO]: Spigot Timings: true - Verbose: true - Interval: 5m - Length: 60m
+[09:04:18 INFO]: Using 6 threads for Netty based IO
+[09:04:18 INFO]: Data value allowed items: 
+[09:04:18 INFO]: Generating keypair
+[09:04:18 INFO]: Starting Minecraft server on *:25565
+[09:04:18 INFO]: Using epoll channel type
+[09:04:18 INFO]: Set PluginClassLoader as parallel capable
+[09:04:18 INFO]: [playit-gg] Loading playit-gg v0.2.0
+[09:04:18 WARN]: **** SERVER IS RUNNING IN OFFLINE/INSECURE MODE!
+[09:04:18 WARN]: The server will make no attempt to authenticate usernames. Beware.
+[09:04:18 WARN]: Whilst this makes it possible to use BungeeCord, unless access to your server is properly restricted, it also opens up the ability for hackers to connect with any username they choose.
+[09:04:18 WARN]: Please see http://www.spigotmc.org/wiki/firewall-guide/ for further information.
+[09:04:18 WARN]: To change this, set "online-mode" to "true" in the server.properties file.
+[09:04:18 INFO]: **** Beginning UUID conversion, this may take A LONG time ****
+[09:04:18 INFO]: Preparing level "world"
+[09:04:18 INFO]: -------- World Settings For [world] --------
+[09:04:18 INFO]: Chunks to Grow per Tick: 650
+[09:04:18 INFO]: Clear tick list: false
+[09:04:18 INFO]: Experience Merge Radius: 3.0
+[09:04:18 INFO]: Mob Spawn Range: 4
+[09:04:18 INFO]: Anti X-Ray: true
+[09:04:18 INFO]: 	Engine Mode: 1
+[09:04:18 INFO]: 	Hidden Blocks: [14, 15, 16, 21, 48, 49, 54, 56, 73, 74, 82, 129, 130]
+[09:04:18 INFO]: 	Replace Blocks: [1, 5]
+[09:04:18 INFO]: Nerfing mobs spawned from spawners: false
+[09:04:18 INFO]: Cactus Growth Modifier: 100%
+[09:04:18 INFO]: Cane Growth Modifier: 100%
+[09:04:18 INFO]: Melon Growth Modifier: 100%
+[09:04:18 INFO]: Mushroom Growth Modifier: 100%
+[09:04:18 INFO]: Pumpkin Growth Modifier: 100%
+[09:04:18 INFO]: Sapling Growth Modifier: 100%
+[09:04:18 INFO]: Wheat Growth Modifier: 100%
+[09:04:18 INFO]: NetherWart Growth Modifier: 100%
+[09:04:18 INFO]: Entity Activation Range: An 32 / Mo 32 / Mi 16
+[09:04:18 INFO]: Entity Tracking Range: Pl 48 / An 48 / Mo 48 / Mi 32 / Other 64
+[09:04:18 INFO]: Hopper Transfer: 8 Hopper Check: 1 Hopper Amount: 1
+[09:04:18 INFO]: Random Lighting Updates: false
+[09:04:18 INFO]: Structure Info Saving: true
+[09:04:18 INFO]: Sending up to 10 chunks per packet
+[09:04:18 INFO]: Max Entity Collisions: 8
+[09:04:18 INFO]: Custom Map Seeds:  Village: 10387312 Feature: 14357617
+[09:04:18 INFO]: Max TNT Explosions: 100
+[09:04:18 INFO]: Item Despawn Rate: 6000
+[09:04:18 INFO]: Item Merge Radius: 2.5
+[09:04:18 INFO]: Arrow Despawn Rate: 1200
+[09:04:18 INFO]: Allow Zombie Pigmen to spawn from portal blocks: true
+[09:04:18 INFO]: View Distance: 10
+[09:04:18 INFO]: Zombie Aggressive Towards Villager: true
